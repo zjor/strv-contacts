@@ -5,30 +5,12 @@ var cookieParser = require('cookie-parser');
 var jwt = require('jwt-simple');
 var jwtSecret = 'dbc2EgDM';
 
+var users = require('./users.js')();
+
 var app = express();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
-
-var users = (function(){
-	var storage = {};
-
-	this.exists = function(email) {
-		return (email in storage);
-	};
-
-	this.add = function(email, password) {
-		storage[email] = password;
-	};
-
-	this.authorize = function(email, password) {
-		return exists(email) && storage[email] == password;
-	}
-
-	return this;
-
-})();
-
 
 app.post('/accounts', function(req, res) {
 	if (req.get('Content-Type') != 'application/json') {
@@ -39,16 +21,19 @@ app.post('/accounts', function(req, res) {
 	var password = req.body.password;
 	//TODO: validate email here
 
-	if (users.exists(email)) {
-		return res.status(400).json(new EmailExistsError());
-	}
-
-	try {
-		users.add(req.body.email, req.body.password);
-	} catch (err) {
-		return res.status(500).send(err.message);
-	}
-	res.status(201).end();
+	users.get(email).then(function(user) {
+		if (user) {
+			return res.status(400).json(new EmailExistsError());	
+		} else {
+			try {
+				users.add(req.body.email, req.body.password).then(function() {
+					res.status(201).end();
+				});
+			} catch (err) {
+				return res.status(500).send(err.message);
+			}			
+		}
+	});
 });
 
 app.get('/access_token', function(req, res) {
@@ -58,13 +43,17 @@ app.get('/access_token', function(req, res) {
 		password: req.query.password
 	};
 
-	if (users.authorize(credentials.email, credentials.password)) {
-		var token = jwt.encode(credentials, jwtSecret);
-		res.cookie('auth_token', token);
-		return res.json({access_token: token});
-	} else {
-		return res.status(401).json(new InvalidCredentialsError());
-	}
+	users.get(credentials.email).then(function(user) {
+		if (user && user.get('password') == credentials.password) {
+			var token = jwt.encode(credentials, jwtSecret);
+			// setting cookie to allow secured call from browser
+			res.cookie('auth_token', token);
+			return res.json({access_token: token});
+		} else {
+			return res.status(401).json(new InvalidCredentialsError());
+		}
+	});
+
 });
 
 app.listen(7001);

@@ -1,16 +1,30 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
+var passport = require('passport');
+var BearerStrategy = require('passport-http-bearer').Strategy;
 
 var jwt = require('jwt-simple');
-var jwtSecret = 'dbc2EgDM';
 
 var users = require('./users.js')();
+var contacts = require('./contacts.js')();
+
+var jwtSecret = 'dbc2EgDM';
+
+passport.use('bearer', new BearerStrategy(function(token, done) {
+	var user = jwt.decode(token, jwtSecret);
+	if (!user) {
+		return done(null, false);
+	} else {
+		return done(null, user.email);
+	}
+}));
 
 var app = express();
-
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(passport.initialize());
+
 
 app.post('/accounts', function(req, res) {
 	if (req.get('Content-Type') != 'application/json') {
@@ -53,10 +67,33 @@ app.get('/access_token', function(req, res) {
 			return res.status(401).json(new InvalidCredentialsError());
 		}
 	});
+});
 
+app.post('/contacts', passport.authenticate('bearer', {session: false}), function(req, res) {
+	if (req.get('Content-Type') != 'application/json') {
+		return res.status(415).send('Unsupported Content-Type\n');
+	}
+
+	contacts.save(req.user, req.body, function(err) {
+		if (err) {
+			return res.status(500).end(err.message);
+		} else {
+			return res.status(201).end();
+		}
+	});
+	
+});
+
+app.get('/contacts', passport.authenticate('bearer', {session: false}), function(req, res) {
+
+	contacts.fetchAll(req.user, function(data) {
+		console.log(data);
+		res.json(data);
+	});	
 });
 
 app.listen(7001);
+console.log('Server started at: 7001');
 
 
 // Errors
@@ -76,6 +113,11 @@ Registration:
 	curl -X POST -H "Content-Type: application/json" http://127.0.0.1:7001/accounts -d "{\"email\":\"zjor.se@gmail.com\", \"password\": \"s3cr3t\"}" -v
 
 Authentication:
-curl "http://127.0.0.1:7001/access_token?email=zjor.se@gmail.com&password=s3cr3t" -v
+	curl "http://127.0.0.1:7001/access_token?email=zjor.se@gmail.com&password=s3cr3t" -v
+
+Create contact:
+	curl -X POST -H "Content-Type: application/json" "http://127.0.0.1:7001/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -d '{"firstName": "Dan", "lastName": "Millman", "phone": "1-800-200-654"}' -v
+	curl "http://127.0.0.1:7001/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
+
 
 */

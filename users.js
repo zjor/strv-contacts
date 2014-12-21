@@ -1,10 +1,10 @@
 var knex = require('knex')({
   client: 'pg',
   connection: {
-    host     : '127.0.0.1',
-    user     : 'test',
-    password : 'testpassword',
-    database : 'strv-contacts',
+    host     : 'ec2-54-204-42-119.compute-1.amazonaws.com',
+    user     : 'kbiqnvwhgkydyh',
+    password : 'fb4HDwjJFidvfWKIplwc7AAZ71',
+    database : 'd6uqv6ldcqbkvu',
     charset  : 'utf8'
   }
 });

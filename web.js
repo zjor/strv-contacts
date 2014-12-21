@@ -1,3 +1,5 @@
+var fs = require('fs');
+var multiparty = require('multiparty');
 var express = require('express');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
@@ -8,6 +10,7 @@ var jwt = require('jwt-simple');
 
 var users = require('./users.js')();
 var contacts = require('./contacts.js')();
+var images = require('./images.js')();
 
 var jwtSecret = 'dbc2EgDM';
 
@@ -74,6 +77,7 @@ app.post('/contacts', passport.authenticate('bearer', {session: false}), functio
 		return res.status(415).send('Unsupported Content-Type\n');
 	}
 
+	// TODO: save only (firstName, lastName, phone) and use optional contactId for update
 	contacts.save(req.user, req.body, function(err) {
 		if (err) {
 			return res.status(500).end(err.message);
@@ -90,6 +94,22 @@ app.get('/contacts', passport.authenticate('bearer', {session: false}), function
 		console.log(data);
 		res.json(data);
 	});	
+});
+
+app.post('/photos', passport.authenticate('bearer', {session: false}), function(req, res) {
+	var contactId = req.query.contactId;
+	var form = new multiparty.Form();
+	form.on('part', function(part) {
+		images.upload(contactId, part, part.byteCount, function(err) {
+			if (err) {
+				return res.status(500).end('Uploading failed');
+			} else {
+				return res.status(201).end();		
+			}
+		});
+		
+	});
+	form.parse(req);
 });
 
 app.listen(7001);
@@ -118,6 +138,9 @@ Authentication:
 Create contact:
 	curl -X POST -H "Content-Type: application/json" "http://127.0.0.1:7001/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -d '{"firstName": "Dan", "lastName": "Millman", "phone": "1-800-200-654"}' -v
 	curl "http://127.0.0.1:7001/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
+
+Upload photo:
+	curl -F "file=@face.jpg" "http://127.0.0.1:7001/photos?contactId=123&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
 
 
 */

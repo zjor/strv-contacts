@@ -142,5 +142,7 @@ Create contact:
 Upload photo:
 	curl -F "file=@face.jpg" "http://127.0.0.1:7001/photos?contactId=-Jdhk78PtNQYggF9s5Zz&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
 
+curl -X POST -H "Content-Type: application/json" https://young-dusk-8108.herokuapp.com/accounts -d "{\"email\":\"zjor.se@gmail.com\", \"password\": \"s3cr3t\"}" -v
+
 
 */

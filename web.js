@@ -112,8 +112,9 @@ app.post('/photos', passport.authenticate('bearer', {session: false}), function(
 	form.parse(req);
 });
 
-app.listen(7001);
-console.log('Server started at: 7001');
+var port = Number(process.env.PORT || 5000);
+app.listen(port);
+console.log('Server started at ' + port);
 
 
 // Errors

@@ -24,10 +24,14 @@ passport.use('bearer', new BearerStrategy(function(token, done) {
 }));
 
 var app = express();
+app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
+app.get('/', function(req, res) {
+	res.sendfile(__dirname + '/public/index.html');
+});
 
 app.post('/accounts', function(req, res) {
 	if (req.get('Content-Type') != 'application/json') {
@@ -132,18 +136,25 @@ function InvalidCredentialsError() {
 /**
 Registration:
 	curl -X POST -H "Content-Type: application/json" http://127.0.0.1:7001/accounts -d "{\"email\":\"zjor.se@gmail.com\", \"password\": \"s3cr3t\"}" -v
+	heroku: curl -X POST -H "Content-Type: application/json" https://young-dusk-8108.herokuapp.com/accounts -d "{\"email\":\"zjor.se@gmail.com\", \"password\": \"s3cr3t\"}" -v
 
 Authentication:
 	curl "http://127.0.0.1:7001/access_token?email=zjor.se@gmail.com&password=s3cr3t" -v
+	heroku: curl "https://young-dusk-8108.herokuapp.com/access_token?email=zjor.se@gmail.com&password=s3cr3t" -v
 
 Create contact:
 	curl -X POST -H "Content-Type: application/json" "http://127.0.0.1:7001/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -d '{"firstName": "Dan", "lastName": "Millman", "phone": "1-800-200-654"}' -v
 	curl "http://127.0.0.1:7001/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
 
+	heroku: curl -X POST -H "Content-Type: application/json" "https://young-dusk-8108.herokuapp.com/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -d '{"firstName": "Dan", "lastName": "Millman", "phone": "1-800-200-654"}' -v
+	heroku: curl "https://young-dusk-8108.herokuapp.com/contacts?access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
+
+
 Upload photo:
 	curl -F "file=@face.jpg" "http://127.0.0.1:7001/photos?contactId=-Jdhk78PtNQYggF9s5Zz&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
+	heroku: curl -F "file=@face.jpg" "https://young-dusk-8108.herokuapp.com/photos?contactId=-JdhfuOdmMfDSsAilhjj&access_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Inpqb3Iuc2VAZ21haWwuY29tIiwicGFzc3dvcmQiOiJzM2NyM3QifQ.utAyPF5u95d3ONM-ezN_ZsU5_szHAXwobVvsnW6-pJk" -v
 
-curl -X POST -H "Content-Type: application/json" https://young-dusk-8108.herokuapp.com/accounts -d "{\"email\":\"zjor.se@gmail.com\", \"password\": \"s3cr3t\"}" -v
+
 
 
 */

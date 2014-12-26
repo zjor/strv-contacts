@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>AddressBook</title>
+
+  <link rel="stylesheet" type="text/css" href="../css/semantic.min.css">
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
+  <script src="../js/semantic.min.js"></script>
+
+  <script src="https://cdn.firebase.com/js/client/2.0.6/firebase.js"></script>
+
+</head>
+<body>
+  <div class="ui three column grid">
+    <div class="three wide column">
+      <div class="ui horizontal inverted basic segment">
+        <h1 class="ui right aligned header">AddressBook</h1>
+      </div>
+    </div>
+    <div class="column">
+      <div class="ui horizontal basic segment">
+        <h1 class="ui header">Contacts</h1>
+      </div>
+    </div>
+    <div class="right aligned column">
+        <span class="ui label">Welcome, {{email}}
+            <a class="detail" href="/logout"><i class="sign out icon"></i> </a>
+        </span>
+
+    </div>
+  </div>
+
+  <div class="ui centered page grid">
+    <div class="ten wide column">
+        <div class="ui list" id="contacts">
+
+        </div>
+    </div>
+  </div>
+<script>
+    $(function () {
+        var firebase = new Firebase("https://intense-heat-3248.firebaseio.com");
+        firebase.child("{{path}}").on("value", function(snapshot) {
+            var data = snapshot.val();
+            $('#contacts').empty();
+            for (var k in data) {
+                $('#contacts').append('<div class="item">' + data[k].firstName +' ' + data[k].lastName + ' - ' +data[k].phone +'</div>');
+            }
+        });
+    });
+</script>
+</body>
+</html>

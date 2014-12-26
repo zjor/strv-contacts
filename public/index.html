@@ -14,51 +14,48 @@
   <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.js"></script>
 
   <script src="js/semantic.min.js"></script>
-
 <style>
-.content {
-	width: 960px;
-	margin: 0 auto;
-	padding-top: 40px;
-}
+	body {
+		padding-top: 40px;
+	}
 </style>
-
 </head>
 <body>
-<div class="content">
-	<div class="ui one column grid">
-		<div class="column">
-			<h1 class="ui header">Address Book Sample App</h1>
-			<h3 class="ui header">Testing instructions</h3>
-			<div class="ui list">
-				<div class="item">
-					<h5 class="ui header">Registration</h5>
-					<div class="ui black message">
+<div class="ui one column centered grid page">
+	<div class="twelve wide column">
+		<h1 class="ui header">Address Book Sample App</h1>
+		<h3 class="ui header">Testing instructions</h3>
+		<div class="ui list">
+			<div class="item">
+				<h5 class="ui header">Registration</h5>
+				<div class="ui black message">
 curl -X POST -H "Content-Type: application/json" https://young-dusk-8108.herokuapp.com/accounts -d "{\"email\":\"user@gmail.com\", \"password\": \"s3cr3t\"}" -v
-					</div>
-				</div>
-				<div class="item">
-					<h5 class="ui header">Authentication</h5>
-					<div class="ui black message">
-curl "https://young-dusk-8108.herokuapp.com/access_token?email=user@gmail.com&password=s3cr3t" -v
-					</div>
-				</div>
-				<div class="item">
-					<h5 class="ui header">Create contact</h5>
-					<div class="ui black message">
-curl -X POST -H "Content-Type: application/json" "https://young-dusk-8108.herokuapp.com/contacts?access_token=&lt;YOUR_ACCESS_TOKEN&gt;" -d '{"firstName": "Dan", "lastName": "Millman", "phone": "1-800-200-654"}' -v
-					</div>
-					<div class="ui black message">	
-curl "https://young-dusk-8108.herokuapp.com/contacts?access_token=&lt;YOUR_ACCESS_TOKEN&gt;" -v
-					</div>
-				</div>
-				<div class="item">
-					<h5 class="ui header">Upload photo</h5>
-					<div class="ui black message">
-	heroku: curl -F "file=@face.jpg" "https://young-dusk-8108.herokuapp.com/photos?contactId=-JdhfuOdmMfDSsAilhjj&access_token=&lt;YOUR_ACCESS_TOKEN&gt;" -v
-					</div>
 				</div>
 			</div>
+			<div class="item">
+				<h5 class="ui header">Authentication</h5>
+				<div class="ui black message">
+curl "https://young-dusk-8108.herokuapp.com/access_token?email=user@gmail.com&password=s3cr3t" -v
+				</div>
+			</div>
+			<div class="item">
+				<h5 class="ui header">Create contact</h5>
+				<div class="ui black message">
+curl -X POST -H "Content-Type: application/json" "https://young-dusk-8108.herokuapp.com/contacts?access_token=&lt;YOUR_ACCESS_TOKEN&gt;" -d '{"firstName": "Dan", "lastName": "Millman", "phone": "1-800-200-654"}' -v
+				</div>
+				<div class="ui black message">
+curl "https://young-dusk-8108.herokuapp.com/contacts?access_token=&lt;YOUR_ACCESS_TOKEN&gt;" -v
+				</div>
+			</div>
+			<div class="item">
+				<h5 class="ui header">Upload photo</h5>
+				<div class="ui black message">
+heroku: curl -F "file=@face.jpg" "https://young-dusk-8108.herokuapp.com/photos?contactId=-JdhfuOdmMfDSsAilhjj&access_token=&lt;YOUR_ACCESS_TOKEN&gt;" -v
+				</div>
+			</div>
+		</div>
+		<div ui="segment">Or try Web UI here:
+			<a class="ui green button" href="/login">Login</a>
 		</div>
 	</div>
 </div>

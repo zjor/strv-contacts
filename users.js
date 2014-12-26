@@ -7,6 +7,14 @@ var knex = require('knex')({
     database : 'd6uqv6ldcqbkvu',
     charset  : 'utf8'
   }
+  //connection: {
+  //  host     : '127.0.0.1',
+  //  user     : 'test',
+  //  password : 'testpassword',
+  //  database : 'strv-contacts',
+  //  charset  : 'utf8'
+  //}
+
 });
 
 var bookshelf = require('bookshelf')(knex);
